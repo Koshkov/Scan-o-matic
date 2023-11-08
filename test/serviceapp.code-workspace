@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../../serviceapp"
+		},
+		{
+			"path": "../../shopping"
+		},
+		{
+			"path": "../../trackweasel"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"settings": {}
+}

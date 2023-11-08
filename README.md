@@ -1,2 +1,3 @@
-# Scan-o-matic
-Simple QR and Bar code app written in flutter. No add, trackers, or other nonsense.
+# Scan-o-matic 
+
+A painfully simple QR and Bar code scanning app. No ads, trackers, or other nonsense.
