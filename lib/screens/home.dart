@@ -22,6 +22,49 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    Widget mainDrawer = Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          const DrawerHeader(
+            decoration: BoxDecoration(color: Colors.deepPurple),
+            child: Text("Scan-o-matic", style: TextStyle(color: Colors.white)),
+          ),
+          ListTile(
+            leading: const Icon(Icons.home),
+            title: const Text("Home"),
+            onTap: () {
+              if (mounted) Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.list),
+            title: const Text("Scans"),
+            onTap: () {
+              if (mounted) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Scans(title: "Scans")));
+              }
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.question_mark),
+            title: const Text("About"),
+            onTap: () {
+              if (mounted) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const About(title: "About")));
+              }
+            },
+          ),
+        ],
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
@@ -64,49 +107,7 @@ class _HomePageState extends State<HomePage> {
               : const Text("Please Scan Something"),
         ),
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.deepPurple),
-              child:
-                  Text("Scan-o-matic", style: TextStyle(color: Colors.white)),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text("Home"),
-              onTap: () {
-                if (mounted) Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.list),
-              title: const Text("Scans"),
-              onTap: () {
-                if (mounted) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const Scans(title: "Scans")));
-                }
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.question_mark),
-              title: const Text("About"),
-              onTap: () {
-                if (mounted) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const About(title: "About")));
-                }
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: mainDrawer,
       floatingActionButton:
           Column(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
         FloatingActionButton(
