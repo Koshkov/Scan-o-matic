@@ -31,13 +31,6 @@ class _HomePageState extends State<HomePage> {
             child: Text("Scan-o-matic", style: TextStyle(color: Colors.white)),
           ),
           ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text("Home"),
-            onTap: () {
-              if (mounted) Navigator.pop(context);
-            },
-          ),
-          ListTile(
             leading: const Icon(Icons.list),
             title: const Text("Scans"),
             onTap: () {
@@ -79,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                   children: <Widget>[
                     Text(
                       decoded,
-                      style: Theme.of(context).textTheme.headlineMedium,
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.center,
