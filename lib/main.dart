@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:scan_o_matic/screens/home.dart';
+import 'package:scan_o_matic/scan.dart';
+import 'package:scan_o_matic/home.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'boxes.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(ScanAdapter());
+  boxScans = await Hive.openBox<Scan>('scanBox');
   runApp(const ScannerApp());
 }
 
@@ -13,10 +19,9 @@ class ScannerApp extends StatelessWidget {
     return MaterialApp(
       title: 'Scan-o-matic',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
       ),
-      home: const HomePage(title: 'Scan-o-matic'),
+      home: const HomePage(),
     );
   }
 }
