@@ -17,24 +17,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   /// Current dispalyed [Widget]
-  int _selectedIndex = 0;
+  int selectedIndex = 0;
 
   /// Stores result from [FlutterBarcodeScanner]
-  String _decoded = "";
+  String decoded = "";
 
   /// Whether or not user saved [Scan] to internal storage
-  bool _clicked = false;
+  bool clicked = false;
 
   /// Changes dispalyed [Widget]
-  void _onItemTapped(int index) {
+  void onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      selectedIndex = index;
     });
   }
 
   /// Copies from QR scan to system clipboard
-  void _copyToClip(String data) async {
-    await Clipboard.setData(ClipboardData(text: data));
+  void copyToClip() async {
+    await Clipboard.setData(ClipboardData(text: decoded));
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// Opens given [Uri] in default browser
-  void _launchUrl(Uri url) async {
+  void openUri(Uri url) async {
     try {
       await launchUrl(url);
     } catch (e) {
@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// Deletes [Scan] given a index
-  void _deleteScan(int index) async {
+  void deleteScan(int index) async {
     try {
       await boxScans.deleteAt(index);
       setState(() {});
@@ -77,16 +77,16 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  /// Launches [FlutterBarcodeScanner] and  changes state of [_decoded],
-  /// [_clicked], and [_selectedIndex]
-  void _getScan() async {
+  /// Launches [FlutterBarcodeScanner] and  changes state of [decoded],
+  /// [clicked], and [selectedIndex]
+  void getScan() async {
     try {
       String result = await FlutterBarcodeScanner.scanBarcode(
           "#ff6666", "Cancel", true, ScanMode.QR);
       setState(() {
-        _decoded = result;
-        _clicked = false;
-        _selectedIndex = 0;
+        decoded = result;
+        clicked = false;
+        selectedIndex = 0;
       });
     } catch (e) {
       if (mounted) {
@@ -101,11 +101,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// Saves [Scan] to [boxScans]
-  void _saveScan() async {
+  void saveScan() async {
     try {
-      await boxScans.put('key_$_decoded', Scan(scan: _decoded));
+      await boxScans.put('key_$decoded', Scan(scan: decoded));
       setState(() {
-        _clicked = true;
+        clicked = true;
       });
     } catch (e) {
       if (mounted) {
@@ -120,46 +120,58 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    Widget scanPage = Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(
-          child: _decoded != "-1" && _decoded.isNotEmpty
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    ListTile(
-                      title: Text(
-                        _decoded,
-                        style: const TextStyle(overflow: TextOverflow.ellipsis),
-                      ),
-                      onTap: () => Uri.parse(_decoded).host.isEmpty
-                          ? null
-                          : _launchUrl(Uri.parse(_decoded)),
-                    ),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          ElevatedButton(
-                            onPressed: () => _copyToClip(_decoded),
-                            child: const Text("Copy"),
-                          ),
-                          const SizedBox(width: 10),
-                          ElevatedButton(
-                            onPressed:
-                                _clicked ? null : () async => _saveScan(),
-                            child: const Text("Save"),
-                          ),
-                        ]),
-                  ],
-                )
-              : const Text("Please Scan Something"),
-        ),
-      ],
-    );
+  Widget build(BuildContext context) => _HomePageView(this);
+}
 
-    Widget scanList = Column(
+class _HomePageView extends StatelessWidget {
+  const _HomePageView(this.state);
+  final _HomePageState state;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> widgetOptions = [
+      _ScanPage(state),
+      _SavedScansPage(state),
+    ];
+    return Scaffold(
+      appBar: AppBar(title: const Text("Scan-o-matic")),
+      body: Container(
+        padding: const EdgeInsets.all(5),
+        child: widgetOptions.elementAt(state.selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Scans',
+          ),
+        ],
+        currentIndex: state.selectedIndex,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        onTap: state.onItemTapped,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Scan QR Code',
+        heroTag: 'QR',
+        child: const Icon(Icons.qr_code),
+        onPressed: () => state.getScan(),
+      ),
+    );
+  }
+}
+
+class _SavedScansPage extends StatelessWidget {
+  const _SavedScansPage(this.state);
+  final _HomePageState state;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
       children: [
         Expanded(
           child: ListView.builder(
@@ -174,7 +186,7 @@ class _HomePageState extends State<HomePage> {
                         icon: Icons.copy,
                         backgroundColor:
                             Theme.of(context).colorScheme.secondary,
-                        onPressed: (context) => _copyToClip(scan.scan),
+                        onPressed: (context) => state.copyToClip(),
                       ),
                     ],
                   ),
@@ -183,7 +195,7 @@ class _HomePageState extends State<HomePage> {
                     SlidableAction(
                         icon: Icons.delete,
                         backgroundColor: Theme.of(context).colorScheme.tertiary,
-                        onPressed: (context) async => _deleteScan(index))
+                        onPressed: (context) async => state.deleteScan(index))
                   ]),
                   child: ListTile(
                     title: Text(scan.scan),
@@ -193,42 +205,50 @@ class _HomePageState extends State<HomePage> {
         ),
       ],
     );
+  }
+}
 
-    List<Widget> widgetOptions = [
-      scanPage,
-      scanList,
-    ];
+class _ScanPage extends StatelessWidget {
+  const _ScanPage(this.state);
+  final _HomePageState state;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Scan-o-matic"),
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(5),
-        child: widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Scans',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        onTap: _onItemTapped,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Scan QR Code',
-        heroTag: 'QR',
-        child: const Icon(Icons.qr_code),
-        onPressed: () => _getScan(),
-      ),
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(
+          child: state.decoded != "-1" && state.decoded.isNotEmpty
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ListTile(
+                      title: Text(
+                        state.decoded,
+                        style: const TextStyle(overflow: TextOverflow.ellipsis),
+                      ),
+                      onTap: () => Uri.parse(state.decoded).host.isEmpty
+                          ? null
+                          : state.openUri(Uri.parse(state.decoded)),
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          ElevatedButton(
+                            onPressed: state.copyToClip,
+                            child: const Text("Copy"),
+                          ),
+                          const SizedBox(width: 10),
+                          ElevatedButton(
+                            onPressed: state.clicked ? null : state.saveScan,
+                            child: const Text("Save"),
+                          ),
+                        ]),
+                  ],
+                )
+              : const Text("Please Scan Something"),
+        ),
+      ],
     );
   }
 }
