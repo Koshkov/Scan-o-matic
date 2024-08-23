@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scan_o_matic/src/application/scanner_model.dart';
 
-import 'package:scan_o_matic/src/presentation/scan_screen.dart';
-import 'package:scan_o_matic/src/presentation/saved_scans_screen.dart';
+import 'package:scan_o_matic/src/presentation/screens/scan_screen.dart';
+import 'package:scan_o_matic/src/presentation/screens/saved_scans_screen.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

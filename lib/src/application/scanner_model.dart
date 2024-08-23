@@ -51,8 +51,8 @@ class ScannerModel extends ChangeNotifier {
 
   /// Deletes [Scan] given a index
   void deleteScan(int index) async {
-    await repo.delete(index);
-    getScans();
+    final res = await repo.delete(index);
+    res.fold((l) => _sendError(l), (r) => getScans());
   }
 
   /// Launches [FlutterBarcodeScanner] and  changes state of [decoded],

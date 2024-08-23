@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scan_o_matic/src/data/datasrc/scan.dart';
-import 'package:scan_o_matic/src/presentation/home.dart';
+import 'package:scan_o_matic/src/presentation/screens/home.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'src/data/datasrc/boxes.dart';
 import 'package:provider/provider.dart';
