@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:scan_o_matic/scan.dart';
-import 'package:scan_o_matic/home.dart';
+import 'package:scan_o_matic/src/data/datasrc/scan.dart';
+import 'package:scan_o_matic/src/presentation/home.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'boxes.dart';
+import 'src/data/datasrc/boxes.dart';
+import 'package:provider/provider.dart';
+import 'package:scan_o_matic/src/application/scanner_model.dart';
 
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(ScanAdapter());
   boxScans = await Hive.openBox<Scan>('scanBox');
-  runApp(const ScannerApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ScannerModel(),
+      child: const ScannerApp(),
+    ),
+  );
 }
 
 class ScannerApp extends StatelessWidget {
