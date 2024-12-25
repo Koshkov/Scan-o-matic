@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:scan_o_matic/src/application/scanner_model.dart';
 import 'package:provider/provider.dart';
+import 'package:scan_o_matic/src/application/scanner_model.dart';
 
 class ScanPage extends StatelessWidget {
   const ScanPage({super.key});

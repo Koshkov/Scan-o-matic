@@ -1,8 +1,8 @@
 class ScanEntity {
   final int? id;
-  final String value;
+  final String scan;
   ScanEntity({
     this.id,
-    required this.value,
+    required this.scan,
   });
 }

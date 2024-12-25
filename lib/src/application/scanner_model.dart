@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
+
 import 'package:scan_o_matic/core/error/failures.dart';
 import 'package:scan_o_matic/src/domain/entities/scan_entity.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:scan_o_matic/src/data/repos/scan_repo.dart';
 
 class ScannerModel extends ChangeNotifier {
@@ -78,7 +79,7 @@ class ScannerModel extends ChangeNotifier {
   /// Saves [Scan] to [boxScans]
   void saveScan() async {
     isLoading = true;
-    final res = await repo.insert(ScanEntity(value: decoded));
+    final res = await repo.insert(ScanEntity(scan: decoded));
     res.fold((l) => _sendError(l), (r) => clicked = true);
     isLoading = false;
   }
